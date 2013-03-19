@@ -41,7 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 /**
  * RecordActivity is the main activity of the app that displays a list view 
  * of all the audio notes. the option to record, delete, and play audio files
- * is accessed from this screen. 
+ * is accessed from this screen. random change
  * @author Team Socrat3s
  *
  */

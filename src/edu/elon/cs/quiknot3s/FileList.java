@@ -15,10 +15,14 @@ public class FileList implements Comparable<FileList>{
 
 	private String fileName;
 	private String uri;
+	private double longitude;
+	private double latitude;
 	
-	public FileList(String fileName, String uri){
+	public FileList(String fileName, String uri, Double longitude, Double latitude){
 		this.fileName = fileName;
 		this.uri = uri;
+		this.longitude = longitude;
+		this.latitude = latitude;
 	}
 	
 	public String getUri(){
@@ -29,6 +33,15 @@ public class FileList implements Comparable<FileList>{
 	public String toString(){
 		return fileName;
 	}
+	
+	public double getLongitude(){
+		return longitude;
+	}
+	
+	public double getLatitude(){
+		return latitude;
+	}
+
 
 	public String getFileName() {
 		return fileName;

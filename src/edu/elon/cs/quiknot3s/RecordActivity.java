@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -54,19 +55,21 @@ public class RecordActivity extends Activity {
 	private String fileName = null;
 	private File file;
 	boolean isRecording = true;
-
 	private ArrayList fileList;
-	protected String[] FILENAMES = new String[] { "Test1", "TestERIC",
-			"TestSocrat3s" };
 	private ListView listView;
 	private ListAdapter listAdapter;
-
+	private TextView latView;
+	private TextView lngView;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_record);
 		
-		
+		latView = (TextView) findViewById(R.id.lat);
+		lngView = (TextView) findViewById(R.id.lng);
+
 		
 		ImageButton recordButton = (ImageButton) findViewById(R.id.imagebuttonrecord);
 		recordButton.setOnClickListener(recordClicker);
@@ -101,9 +104,13 @@ public class RecordActivity extends Activity {
 
 				String audioPath = current.getUri();
 				String audioName = current.getFileName();
+				Double longitude = current.getLongitude();
+				Double latitude = current.getLatitude();
 				Bundle sendBundle = new Bundle();
 				sendBundle.putString("audioPath", audioPath);
 				sendBundle.putString("audioName", audioName);
+				sendBundle.putDouble("longitude", longitude);
+				sendBundle.putDouble("latitude", latitude);
 				// creates an intent add the
 				Intent i = new Intent(RecordActivity.this, PlayActivity.class);
 				i.putExtras(sendBundle);
@@ -163,6 +170,8 @@ public class RecordActivity extends Activity {
 			currentLatitude = location.getLatitude();
 			currentLongitude = location.getLongitude();
 			
+			latView.setText("" + currentLatitude);
+			lngView.setText("" + currentLongitude);
 		}
 
 		@Override
@@ -193,9 +202,12 @@ public class RecordActivity extends Activity {
 			for (File inFile : files) {
 				if (inFile.isFile()) {
 					int lastSlash = inFile.toString().lastIndexOf("/");
-					String fileName = inFile.toString()
-							.substring(lastSlash + 1);
-					FileList current = new FileList(fileName, inFile.toString());
+					String tokenString = inFile.toString().substring(lastSlash+1);
+					StringTokenizer token = new StringTokenizer(tokenString, "_");
+					double latitude = Double.parseDouble(token.nextToken());
+					double longitude = Double.parseDouble(token.nextToken());
+					String fileName = token.nextToken();
+					FileList current = new FileList(fileName, inFile.toString(), longitude, latitude);
 					fileList.add(current);
 				}
 			}
@@ -265,9 +277,10 @@ public class RecordActivity extends Activity {
 
 			// Create filename from date and time
 			SimpleDateFormat formatter = new SimpleDateFormat(
-					"yyyy_MM_dd-HH_mm_ss");
+					"yyyy-MM-dd-HH-mm-ss");
 			Date now = new Date();
-			String saveName = formatter.format(now) + ".3gp";
+			String saveName = currentLatitude + "_" + currentLongitude 
+					+ "_" + formatter.format(now) +  ".3gp";
 
 			file = new File(path, saveName);
 			fileName = file.toString();
